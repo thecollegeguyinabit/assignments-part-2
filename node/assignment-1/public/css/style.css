@@ -1,0 +1,47 @@
+main{
+    margin: 0px 10%;
+}
+header{
+    margin: 0 10%;
+}
+header div{
+    display: flex;
+    justify-content: space-between;
+}
+header div input{
+    min-width: 300px;
+}
+
+td,th[scope='col']{
+    text-align: center;
+}
+th[scope='col'] {
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+body {
+    background-color: #f8f9fa;
+}
+
+.table th {
+    border-top: none;
+}
+.btn {
+    margin: 2px;
+}
+
+.modal-backdrop.show {
+    opacity: 0.5;
+}
+
+.alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    max-width: 300px;
+}

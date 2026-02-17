@@ -1,0 +1,43 @@
+<header class="mb-3">
+    <h1 class="pt-4 pb-1 mb-3 bg-primary text-bg-primary text-center ">Course Management </h1>
+    <div>
+        <input type="text" id="searchInput"  placeholder="search by courses.." >
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCourseModal">
+            Add Course
+        </button>
+    
+    </div>
+</header>
+
+<!-- Modal -->
+<div class="modal fade" id="addCourseModal"  tabindex="-1" aria-labelledby="addCourseModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="addCourseModalLabel">Course Details</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="addCourseForm">
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="courseName" class="form-label">Course Name</label>
+                    <input type="text" class="form-control" id="courseName" name="courseName" placeholder="Physics: Laws of Motion" required>
+                </div>
+                <div class="mb-3">
+                    <label for="courseDuration" class="form-label">Course Duration</label>
+                    <input type="text" class="form-control" id="courseDuration" name="courseDuration" placeholder="5 days" required>
+                </div>
+                <div class="mb-3">
+                    <label for="courseFees" class="form-label">Course Fees</label>
+                    <input type="number" step="0.01" class="form-control" id="courseFees" name="courseFees" placeholder="5.99" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
