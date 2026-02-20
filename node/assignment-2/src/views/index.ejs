@@ -1,0 +1,197 @@
+<%- include('partials/header') %>
+    <%- include('partials/sidebar', { activePage: 'dashboard' }) %>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <div class="page-header">
+                <h2>Dashboard</h2>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-sm-6 col-xl-3">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="stat-label">Total Accounts</div>
+                                    <div class="stat-value text-primary">
+                                        <%= accounts.length %>
+                                    </div>
+                                </div>
+                                <div class="stat-icon bg-primary bg-opacity-10">
+                                    <i class="bi bi-bank text-primary fs-5"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="stat-label">Total Income</div>
+                                    <div class="stat-value text-success">₹<%= totalIncome.toLocaleString('en-IN', {
+                                            minimumFractionDigits: 2 }) %>
+                                    </div>
+                                </div>
+                                <div class="stat-icon bg-success bg-opacity-10">
+                                    <i class="bi bi-arrow-down-circle text-success fs-5"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="stat-label">Total Expenses</div>
+                                    <div class="stat-value text-danger">₹<%= totalExpense.toLocaleString('en-IN', {
+                                            minimumFractionDigits: 2 }) %>
+                                    </div>
+                                </div>
+                                <div class="stat-icon bg-danger bg-opacity-10">
+                                    <i class="bi bi-arrow-up-circle text-danger fs-5"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="stat-label">Net Balance</div>
+                                    <div class="stat-value <%= totalBalance >= 0 ? 'text-success' : 'text-danger' %>">₹
+                                        <%= totalBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 }) %>
+                                    </div>
+                                </div>
+                                <div class="stat-icon bg-info bg-opacity-10">
+                                    <i class="bi bi-wallet2 text-info fs-5"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accounts Overview -->
+            <h4 class="mb-3">Your Accounts</h4>
+            <% if (accounts.length===0) { %>
+                <div class="empty-state">
+                    <i class="bi bi-bank" style="font-size: 3rem; color: #dee2e6;"></i>
+                    <p class="mt-2">No accounts yet. <a href="/accounts">Create one</a> to get started.</p>
+                </div>
+                <% } else { %>
+                    <div class="table-container">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Account Name</th>
+                                        <th>Income</th>
+                                        <th>Expense</th>
+                                        <th>Balance</th>
+                                        <th>Transactions</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% accounts.forEach(account=> { %>
+                                        <tr>
+                                            <td>
+                                                <strong>
+                                                    <%= account.accountName %>
+                                                </strong>
+                                                <% if (account.owner._id.toString() !==user._id.toString()) { %>
+                                                    <span class="badge bg-info shared-badge ms-1">Shared</span>
+                                                    <% } %>
+                                            </td>
+                                            <td class="text-success">₹<%= account.income.toLocaleString('en-IN', {
+                                                    minimumFractionDigits: 2 }) %>
+                                            </td>
+                                            <td class="text-danger">₹<%= account.expense.toLocaleString('en-IN', {
+                                                    minimumFractionDigits: 2 }) %>
+                                            </td>
+                                            <td
+                                                class="<%= account.balance >= 0 ? 'text-success' : 'text-danger' %> fw-bold">
+                                                ₹<%= account.balance.toLocaleString('en-IN', { minimumFractionDigits: 2
+                                                    }) %>
+                                            </td>
+                                            <td>
+                                                <%= account.transactionCount %>
+                                            </td>
+                                            <td>
+                                                <a href="/transactions/<%= account._id %>"
+                                                    class="btn btn-sm btn-outline-primary btn-action">
+                                                    <i class="bi bi-eye me-1"></i>View
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <% } %>
+
+                        <!-- recent transactions -->
+                        <% if (recentTransactions.length> 0) { %>
+                            <h4 class="mt-4 mb-3">Recent Transactions</h4>
+                            <div class="table-container">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Account</th>
+                                                <th>Type</th>
+                                                <th>Category</th>
+                                                <th>Amount</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% recentTransactions.forEach(t=> { %>
+                                                <tr>
+                                                    <td>
+                                                        <%= new Date(t.date).toLocaleDateString('en-IN', {
+                                                            day: '2-digit' , month: 'short' , year: 'numeric' }) %>
+                                                    </td>
+                                                    <td>
+                                                        <%= t.account ? t.account.accountName : 'N/A' %>
+                                                    </td>
+                                                    <td>
+                                                        <span
+                                                            class="badge badge-<%= t.type.toLowerCase() %> rounded-pill">
+                                                            <%= t.type %>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <%= t.category %>
+                                                    </td>
+                                                    <td
+                                                        class="<%= t.type === 'income' ? 'text-success' : t.type === 'expense' ? 'text-danger' : 'text-primary' %> fw-bold">
+                                                        <%= t.type==='Expense' ? '-' : '+' %>₹<%=
+                                                                t.amount.toLocaleString('en-IN', {
+                                                                minimumFractionDigits: 2 }) %>
+                                                    </td>
+                                                    <td>
+                                                        <%= t.description || '-' %>
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <% } %>
+        </main>
+        </div>
+        </div>
+
+        <%- include('partials/footer') %>

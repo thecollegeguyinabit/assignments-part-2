@@ -1,0 +1,309 @@
+<%- include('partials/header') %>
+    <%- include('partials/sidebar', { activePage: 'transactions' }) %>
+
+        <!-- main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            <div class="page-header">
+                <div>
+                    <h2>
+                        <%= currentAccount.name %>
+                    </h2>
+                    <small class="text-muted">Transactions</small>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    <!-- account selector -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-arrow-left-right me-1"></i>Switch Account
+                        </button>
+                        <ul class="dropdown-menu">
+                            <% accounts.forEach(acc=> { %>
+                                <li>
+                                    <a class="dropdown-item <%= acc._id.toString() === currentAccount._id.toString() ? 'active' : '' %>"
+                                        href="/transactions/<%= acc._id %>">
+                                        <%= acc.name %>
+                                    </a>
+                                </li>
+                                <% }) %>
+                        </ul>
+                    </div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+                        <i class="bi bi-plus-lg me-1"></i>
+                        Add Transaction
+                    </button>
+                </div>
+            </div>
+
+            <!-- summary cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-sm-4">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="stat-label">Income</div>
+                                    <div class="stat-value text-success fs-5">
+                                        ₹<%= income.toLocaleString('en-IN', { minimumFractionDigits: 2 }) %>
+                                    </div>
+                                </div>
+                                <i class="bi bi-arrow-down-circle-fill text-success fs-3 opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="stat-label">Expense</div>
+                                    <div class="stat-value text-danger fs-5">
+                                        ₹<%= expense.toLocaleString('en-IN', { minimumFractionDigits: 2 }) %>
+                                    </div>
+                                </div>
+                                <i class="bi bi-arrow-up-circle-fill text-danger fs-3 opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="stat-label">Balance</div>
+                                    <div class="stat-value fs-5 <%= balance >= 0 ? 'text-success' : 'text-danger' %>">₹
+                                        <%= balance.toLocaleString('en-IN', { minimumFractionDigits: 2 }) %>
+                                    </div>
+                                </div>
+                                <i class="bi bi-wallet2 text-info fs-3 opacity-50"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Table -->
+            <% if (transactions.length===0) { %>
+                <div class="empty-state">
+                    <i class="bi bi-receipt" style="font-size: 3rem; color: #dee2e6;"></i>
+                    <h5 class="mt-3">No transactions yet</h5>
+                    <p class="text-muted">Add your first transaction to start tracking.</p>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+                        <i class="bi bi-plus-lg me-1"></i>Add Transaction
+                    </button>
+                </div>
+                <% } else { %>
+                    <div class="table-container">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Category</th>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% transactions.forEach(t=> { %>
+                                        <tr>
+                                            <td>
+                                                <div>
+                                                    <%= new Date(t.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' , year: 'numeric' }) %>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-<%= t.type.toLowerCase() %> rounded-pill px-2 py-1">
+                                                    <i class="bi bi-<%= t.type === 'Income' ? 'arrow-down-circle' : t.type === 'Expense' ? 'arrow-up-circle' : 'arrow-left-right' %> me-1"></i>
+                                                    <%= t.type %>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <%= t.category %>
+                                            </td>
+                                            <td>
+                                                <%= t.description || '-' %>
+                                            </td>
+                                            <td
+                                                class="<%= t.type === 'Income' ? 'text-success' : t.type === 'Expense' ? 'text-danger' : 'text-primary' %> fw-bold text-nowrap">
+                                                <%= t.type==='Expense' ? '-' : '+' %>
+                                                ₹<%= t.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 }) %>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex gap-1">
+                                                    <button class="btn btn-sm btn-outline-secondary btn-action"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editTransactionModal-<%= t._id %>">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-danger btn-action"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#deleteTransactionModal-<%= t._id %>">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Edit Transaction Modal -->
+                                        <div class="modal fade" id="editTransactionModal-<%= t._id %>" tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <form data-method="PUT" method="POST" class="ajax-form" action="/transactions/<%= t._id %>">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Edit Transaction</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Account Name</label>
+                                                                <input type="text" class="form-control" name="accountName" value="<%= t.accountName %>" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Type</label>
+                                                                <select class="form-select" name="type" required>
+                                                                    <option value="income" <%=t.type==='income' || t.type==='Income'
+                                                                        ? 'selected' : '' %>>Income</option>
+                                                                    <option value="expense" <%=t.type==='expense' || t.type==='Expense'
+                                                                        ? 'selected' : '' %>>Expense</option>
+                                                                    <option value="transfer" <%=t.type==='transfer' || t.type==='Transfer'
+                                                                        ? 'selected' : '' %>>Transfer</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Category</label>
+                                                                <input type="text" class="form-control" name="category" value="<%= t.category %>" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Amount</label>
+                                                                <input type="number" class="form-control" name="amount"
+                                                                    value="<%= t.amount %>" step="0.01" min="0.01"
+                                                                    required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Description</label>
+                                                                <input type="text" class="form-control"
+                                                                    name="description" value="<%= t.description %>">
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Date</label>
+                                                                <input type="date" class="form-control" name="date"
+                                                                    value="<%= new Date(t.date).toISOString().split('T')[0] %>"
+                                                                    required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Cancel</button>
+                                                            <button type="submit" class="btn btn-primary" id="saveTransactionBtn">
+                                                                Save Changes
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- delete transaction modal -->
+                                        <div class="modal fade" id="deleteTransactionModal-<%= t._id %>" tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title text-danger">Delete Transaction</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Are you sure you want to delete this transaction?</p>
+                                                        <div class="bg-light p-3 rounded">
+                                                            <strong>
+                                                                <%= t.category %>
+                                                            </strong> — ₹<%= t.amount.toLocaleString('en-IN') %>
+                                                                <br><small class="text-muted">
+                                                                    <%= t.type %> on <%= new
+                                                                            Date(t.date).toLocaleDateString('en-IN') %>
+                                                                </small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Cancel</button>
+                                                        <form data-method="DELETE" method="POST" class="ajax-form" action="/transactions/<%= t._id %>">
+                                                            <button type="submit" class="btn btn-danger">
+                                                                <i class="bi bi-trash me-1"></i>
+                                                                Delete
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <% } %>
+        </main>
+        </div>
+        </div>
+
+    <!-- add transaction modal -->
+    <div class="modal fade" id="addTransactionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" class="ajax-form" action="/transactions">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Transaction</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="account" value="<%= currentAccount._id %>">
+                        <input type="hidden" name="accountName" value="<%= currentAccount.accountName %>">
+
+                        <div class="mb-3">
+                            <label class="form-label">Type</label>
+                            <select class="form-select" name="type" id="addType" required>
+                                <option value="income">Income</option>
+                                <option value="expense">Expense</option>
+                                <option value="transfer">Transfer</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <input type="text" class="form-control" name="category" id="addCategory"
+                                placeholder="e.g. Salary, Groceries, Rent" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input type="number" class="form-control" name="amount" step="0.01" min="0.01"
+                                    placeholder="0.00" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <input type="text" class="form-control" name="description"
+                                placeholder="Optional description">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Date</label>
+                            <input type="date" class="form-control" name="date"
+                                value="<%= new Date().toISOString().split('T')[0] %>" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-plus-lg me-1"></i>
+                            Add Transaction
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<%- include('partials/footer') %>

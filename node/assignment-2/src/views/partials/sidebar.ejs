@@ -1,0 +1,66 @@
+<header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow" data-bs-theme="dark">
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="/dashboard">
+        <i class="bi bi-wallet2 me-1"></i> Expense Manager
+    </a>
+
+    <button class="navbar-toggler d-md-none collapsed" type="button" data-bs-toggle="offcanvas"
+        data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="navbar-nav flex-row d-none d-md-flex me-3">
+        <div class="nav-item text-nowrap d-flex align-items-center gap-3">
+            <span class="text-white-50 small"><i class="bi bi-person-circle me-1"></i>
+                <%= user.name %>
+            </span>
+            <a class="nav-link px-3 text-white" href="/signout">
+                <i class="bi bi-box-arrow-right me-1"></i>Sign out
+            </a>
+        </div>
+    </div>
+</header>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- sidebar -->
+        <div class="sidebar border-end col-md-3 col-lg-2 p-0 bg-body-tertiary">
+            <div class="offcanvas-md offcanvas-start bg-body-tertiary" tabindex="-1" id="sidebarMenu"
+                aria-labelledby="sidebarMenuLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="sidebarMenuLabel">Expense Manager</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu"
+                        aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'active' : '' %>"
+                                href="/dashboard">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'accounts' ? 'active' : '' %>"
+                                href="/accounts">
+                                <i class="bi bi-bank"></i> Accounts
+                            </a>
+                        </li>
+                    </ul>
+
+                    <hr class="my-3">
+
+                    <ul class="nav flex-column mb-auto">
+                        <li class="nav-item d-md-none">
+                            <span class="nav-link text-muted"><i class="bi bi-person-circle me-1"></i>
+                                <%= user.name %>
+                            </span>
+                        </li>
+                        <li class="nav-item d-md-none">
+                            <a class="nav-link" href="/signout">
+                                <i class="bi bi-box-arrow-right"></i> Sign out
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
